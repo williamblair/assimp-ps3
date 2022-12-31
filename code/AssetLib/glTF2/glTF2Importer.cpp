@@ -70,6 +70,27 @@ using namespace Assimp;
 using namespace glTF2;
 using namespace glTFCommon;
 
+static inline float swapFloatEndianness(const float in)
+{
+    float outFloat;
+    uint8_t* outBytes = (uint8_t*)&outFloat;
+    const uint8_t* inBytes = (const uint8_t*)&in;
+    outBytes[0] = inBytes[3];
+    outBytes[1] = inBytes[2];
+    outBytes[2] = inBytes[1];
+    outBytes[3] = inBytes[0];
+    return outFloat;
+}
+static inline uint16_t swapUint16Endianness(const uint16_t in)
+{
+    uint16_t outShort;
+    uint8_t* outBytes = (uint8_t*)&outShort;
+    const uint8_t* inBytes = (const uint8_t*)&in;
+    outBytes[0] = inBytes[1];
+    outBytes[1] = inBytes[0];
+    return outShort;
+}
+
 namespace {
 // generate bi-tangents from normals and tangents according to spec
 struct Tangent {
@@ -493,6 +514,12 @@ void glTF2Importer::ImportMeshes(glTF2::Asset &r) {
             if (!attr.position.empty() && attr.position[0]) {
                 aim->mNumVertices = static_cast<unsigned int>(attr.position[0]->count);
                 attr.position[0]->ExtractData(aim->mVertices);
+                for (unsigned int vertNum = 0; vertNum < aim->mNumVertices; ++vertNum) {
+                    aiVector3D& vert = aim->mVertices[vertNum];
+                    vert.x = swapFloatEndianness(vert.x);
+                    vert.y = swapFloatEndianness(vert.y);
+                    vert.z = swapFloatEndianness(vert.z);
+                }
             }
 
             if (!attr.normal.empty() && attr.normal[0]) {
@@ -500,6 +527,12 @@ void glTF2Importer::ImportMeshes(glTF2::Asset &r) {
                     DefaultLogger::get()->warn("Normal count in mesh \"", mesh.name, "\" does not match the vertex count, normals ignored.");
                 } else {
                     attr.normal[0]->ExtractData(aim->mNormals);
+                    for (unsigned int normNum = 0; normNum < aim->mNumVertices; ++normNum) {
+                        aiVector3D& norm = aim->mNormals[normNum];
+                        norm.x = swapFloatEndianness(norm.x);
+                        norm.y = swapFloatEndianness(norm.y);
+                        norm.z = swapFloatEndianness(norm.z);
+                    }
 
                     // only extract tangents if normals are present
                     if (!attr.tangent.empty() && attr.tangent[0]) {
@@ -510,6 +543,13 @@ void glTF2Importer::ImportMeshes(glTF2::Asset &r) {
                             Tangent *tangents = nullptr;
 
                             attr.tangent[0]->ExtractData(tangents);
+                            for (unsigned int tanNum = 0; tanNum < aim->mNumVertices; ++tanNum) {
+                                Tangent& tangent = tangents[tanNum];
+                                tangent.xyz.x = swapFloatEndianness(tangent.xyz.x);
+                                tangent.xyz.y = swapFloatEndianness(tangent.xyz.y);
+                                tangent.xyz.z = swapFloatEndianness(tangent.xyz.z);
+                                tangent.w = swapFloatEndianness(tangent.w);
+                            }
 
                             aim->mTangents = new aiVector3D[aim->mNumVertices];
                             aim->mBitangents = new aiVector3D[aim->mNumVertices];
@@ -535,6 +575,13 @@ void glTF2Importer::ImportMeshes(glTF2::Asset &r) {
                 auto componentType = attr.color[c]->componentType;
                 if (componentType == glTF2::ComponentType_FLOAT) {
                     attr.color[c]->ExtractData(aim->mColors[c]);
+                    for (unsigned int clrNum = 0; clrNum < aim->mNumVertices; ++clrNum) {
+                        aiColor4D& color = aim->mColors[c][clrNum];
+                        color.r = swapFloatEndianness(color.r);
+                        color.g = swapFloatEndianness(color.g);
+                        color.b = swapFloatEndianness(color.b);
+                        color.a = swapFloatEndianness(color.a);
+                    }
                 } else {
                     if (componentType == glTF2::ComponentType_UNSIGNED_BYTE) {
                         aim->mColors[c] = GetVertexColorsForType<unsigned char>(attr.color[c]);
@@ -556,6 +603,12 @@ void glTF2Importer::ImportMeshes(glTF2::Asset &r) {
                 }
 
                 attr.texcoord[tc]->ExtractData(aim->mTextureCoords[tc]);
+                for (unsigned int tcNum = 0; tcNum < aim->mNumVertices; ++tcNum) {
+                    aiVector3D& texCoord = aim->mTextureCoords[tc][tcNum];
+                    texCoord.x = swapFloatEndianness(texCoord.x);
+                    texCoord.y = swapFloatEndianness(texCoord.y);
+                    texCoord.z = swapFloatEndianness(texCoord.z);
+                }
                 aim->mNumUVComponents[tc] = attr.texcoord[tc]->GetNumComponents();
 
                 aiVector3D *values = aim->mTextureCoords[tc];
@@ -586,6 +639,10 @@ void glTF2Importer::ImportMeshes(glTF2::Asset &r) {
                             aiVector3D *positionDiff = nullptr;
                             target.position[0]->ExtractData(positionDiff);
                             for (unsigned int vertexId = 0; vertexId < aim->mNumVertices; vertexId++) {
+                                aiVector3D& pos = positionDiff[vertexId];
+                                pos.x = swapFloatEndianness(pos.x);
+                                pos.y = swapFloatEndianness(pos.y);
+                                pos.z = swapFloatEndianness(pos.z);
                                 aiAnimMesh.mVertices[vertexId] += positionDiff[vertexId];
                             }
                             delete[] positionDiff;
@@ -598,6 +655,10 @@ void glTF2Importer::ImportMeshes(glTF2::Asset &r) {
                             aiVector3D *normalDiff = nullptr;
                             target.normal[0]->ExtractData(normalDiff);
                             for (unsigned int vertexId = 0; vertexId < aim->mNumVertices; vertexId++) {
+                                aiVector3D& norm = normalDiff[vertexId];
+                                norm.x = swapFloatEndianness(norm.x);
+                                norm.y = swapFloatEndianness(norm.y);
+                                norm.z = swapFloatEndianness(norm.z);
                                 aiAnimMesh.mNormals[vertexId] += normalDiff[vertexId];
                             }
                             delete[] normalDiff;
@@ -612,9 +673,22 @@ void glTF2Importer::ImportMeshes(glTF2::Asset &r) {
                         } else {
                             Tangent *tangent = nullptr;
                             attr.tangent[0]->ExtractData(tangent);
+                            for (unsigned int tanNum = 0; tanNum < aim->mNumVertices; ++tanNum) {
+                                Tangent& tan = tangent[tanNum];
+                                tan.xyz.x = swapFloatEndianness(tan.xyz.x);
+                                tan.xyz.y = swapFloatEndianness(tan.xyz.y);
+                                tan.xyz.z = swapFloatEndianness(tan.xyz.z);
+                                tan.w = swapFloatEndianness(tan.w);
+                            }
 
                             aiVector3D *tangentDiff = nullptr;
                             target.tangent[0]->ExtractData(tangentDiff);
+                            for (unsigned int tanNum = 0; tanNum < aim->mNumVertices; ++tanNum) {
+                                aiVector3D& tan = tangentDiff[tanNum];
+                                tan.x = swapFloatEndianness(tan.x);
+                                tan.y = swapFloatEndianness(tan.y);
+                                tan.z = swapFloatEndianness(tan.z);
+                            }
 
                             for (unsigned int vertexId = 0; vertexId < aim->mNumVertices; ++vertexId) {
                                 tangent[vertexId].xyz += tangentDiff[vertexId];
@@ -971,6 +1045,13 @@ static void BuildVertexWeightMapping(Mesh::Primitive &primitive, std::vector<std
     Weights **weights = new Weights*[attr.weight.size()];
     for (size_t w = 0; w < attr.weight.size(); ++w) {
         attr.weight[w]->ExtractData(weights[w]);
+        for (unsigned int weightNum = 0; weightNum < num_vertices; ++weightNum) {
+            Weights& weight = weights[w][weightNum];
+            weight.values[0] = swapFloatEndianness(weight.values[0]);
+            weight.values[1] = swapFloatEndianness(weight.values[1]);
+            weight.values[2] = swapFloatEndianness(weight.values[2]);
+            weight.values[3] = swapFloatEndianness(weight.values[3]);
+        }
     }
 
     struct Indices8 {
@@ -990,6 +1071,13 @@ static void BuildVertexWeightMapping(Mesh::Primitive &primitive, std::vector<std
         indices16 = new Indices16 *[attr.joint.size()];
         for (size_t j = 0; j < attr.joint.size(); ++j) {
             attr.joint[j]->ExtractData(indices16[j]);
+            for (unsigned int idxNum = 0; idxNum < num_vertices; ++idxNum) {
+                Indices16& idx = indices16[j][idxNum];
+                idx.values[0] = swapUint16Endianness(idx.values[0]);
+                idx.values[1] = swapUint16Endianness(idx.values[1]);
+                idx.values[2] = swapUint16Endianness(idx.values[2]);
+                idx.values[3] = swapUint16Endianness(idx.values[3]);
+            }
         }
     }
     //
@@ -1125,6 +1213,10 @@ aiNode *ImportNode(aiScene *pScene, glTF2::Asset &r, std::vector<unsigned int> &
                     node.skin->inverseBindMatrices->ExtractData(pbindMatrices);
 
                     for (uint32_t i = 0; i < numBones; ++i) {
+                        for (size_t m=0; m<16; ++m) {
+                            pbindMatrices[i][m] = swapFloatEndianness(pbindMatrices[i][m]);
+                        }
+
                         const std::vector<aiVertexWeight> &weights = weighting[i];
                         aiBone *bone = new aiBone();
 
@@ -1258,7 +1350,11 @@ aiNodeAnim *CreateNodeAnim(glTF2::Asset &, Node &node, AnimationSamplers &sample
             anim->mPositionKeys = new aiVectorKey[anim->mNumPositionKeys];
             unsigned int ii = (samplers.translation->interpolation == Interpolation_CUBICSPLINE) ? 1 : 0;
             for (unsigned int i = 0; i < anim->mNumPositionKeys; ++i) {
+                times[i] = swapFloatEndianness(times[i]);
                 anim->mPositionKeys[i].mTime = times[i] * kMillisecondsFromSeconds;
+                values[ii].x = swapFloatEndianness(values[ii].x);
+                values[ii].y = swapFloatEndianness(values[ii].y);
+                values[ii].z = swapFloatEndianness(values[ii].z);
                 anim->mPositionKeys[i].mValue = values[ii];
                 ii += (samplers.translation->interpolation == Interpolation_CUBICSPLINE) ? 3 : 1;
             }
@@ -1282,7 +1378,12 @@ aiNodeAnim *CreateNodeAnim(glTF2::Asset &, Node &node, AnimationSamplers &sample
             anim->mRotationKeys = new aiQuatKey[anim->mNumRotationKeys];
             unsigned int ii = (samplers.rotation->interpolation == Interpolation_CUBICSPLINE) ? 1 : 0;
             for (unsigned int i = 0; i < anim->mNumRotationKeys; ++i) {
+                times[i] = swapFloatEndianness(times[i]);
                 anim->mRotationKeys[i].mTime = times[i] * kMillisecondsFromSeconds;
+                values[ii].w = swapFloatEndianness(values[ii].w);
+                values[ii].x = swapFloatEndianness(values[ii].x);
+                values[ii].y = swapFloatEndianness(values[ii].y);
+                values[ii].z = swapFloatEndianness(values[ii].z);
                 anim->mRotationKeys[i].mValue.x = values[ii].w;
                 anim->mRotationKeys[i].mValue.y = values[ii].x;
                 anim->mRotationKeys[i].mValue.z = values[ii].y;
@@ -1310,7 +1411,11 @@ aiNodeAnim *CreateNodeAnim(glTF2::Asset &, Node &node, AnimationSamplers &sample
             anim->mScalingKeys = new aiVectorKey[anim->mNumScalingKeys];
             unsigned int ii = (samplers.scale->interpolation == Interpolation_CUBICSPLINE) ? 1 : 0;
             for (unsigned int i = 0; i < anim->mNumScalingKeys; ++i) {
+                times[i] = swapFloatEndianness(times[i]);
                 anim->mScalingKeys[i].mTime = times[i] * kMillisecondsFromSeconds;
+                values[ii].x = swapFloatEndianness(values[ii].x);
+                values[ii].y = swapFloatEndianness(values[ii].y);
+                values[ii].z = swapFloatEndianness(values[ii].z);
                 anim->mScalingKeys[i].mValue = values[ii];
                 ii += (samplers.scale->interpolation == Interpolation_CUBICSPLINE) ? 3 : 1;
             }
@@ -1355,6 +1460,7 @@ aiMeshMorphAnim *CreateMeshMorphAnim(glTF2::Asset &, Node &node, AnimationSample
             unsigned int ii = (samplers.weight->interpolation == Interpolation_CUBICSPLINE) ? 1 : 0;
             for (unsigned int i = 0u; i < anim->mNumKeys; ++i) {
                 unsigned int k = weightStride * i + ii;
+                times[i] = swapFloatEndianness(times[i]);
                 anim->mKeys[i].mTime = times[i] * kMillisecondsFromSeconds;
                 anim->mKeys[i].mNumValuesAndWeights = numMorphs;
                 anim->mKeys[i].mValues = new unsigned int[numMorphs];
@@ -1362,6 +1468,7 @@ aiMeshMorphAnim *CreateMeshMorphAnim(glTF2::Asset &, Node &node, AnimationSample
 
                 for (unsigned int j = 0u; j < numMorphs; ++j, ++k) {
                     anim->mKeys[i].mValues[j] = j;
+                    values[k] = swapFloatEndianness(values[k]);
                     anim->mKeys[i].mWeights[j] = (0.f > values[k]) ? 0.f : values[k];
                 }
             }

@@ -1674,7 +1674,11 @@ void ColladaParser::ReadInputChannel(XmlNode &node, std::vector<InputChannel> &p
 
     // read index offset, if per-index <input>
     if (XmlParser::hasAttribute(node, "offset")) {
-        XmlParser::getUIntAttribute(node, "offset", (unsigned int &)channel.mOffset);
+        unsigned int offset;
+        XmlParser::getUIntAttribute(node, "offset", offset);
+        channel.mOffset = (long unsigned int)offset;
+        //XmlParser::getUIntAttribute(node, "offset", (unsigned int &)channel.mOffset);
+        //printf("Index offset: %lu\n", channel.mOffset);
     }
 
     // read set if texture coordinates
@@ -2194,14 +2198,20 @@ void ColladaParser::ReadMaterialVertexInputBinding(XmlNode &node, Collada::Seman
             // effect semantic
             if (XmlParser::hasAttribute(currentNode, "semantic")) {
                 std::string s;
+                unsigned int mType = 0;
                 XmlParser::getStdStrAttribute(currentNode, "semantic", s);
-                XmlParser::getUIntAttribute(currentNode, "input_semantic", (unsigned int &)vn.mType);
+                //XmlParser::getUIntAttribute(currentNode, "input_semantic", (unsigned int &)vn.mType);
+                XmlParser::getUIntAttribute(currentNode, "input_semantic", mType);
+                vn.mType = (InputType)mType;
             }
             std::string s;
             XmlParser::getStdStrAttribute(currentNode, "semantic", s);
 
             // input semantic
-            XmlParser::getUIntAttribute(currentNode, "input_semantic", (unsigned int &)vn.mType);
+            unsigned int mType;
+            //XmlParser::getUIntAttribute(currentNode, "input_semantic", (unsigned int &)vn.mType);
+            XmlParser::getUIntAttribute(currentNode, "input_semantic", mType);
+            vn.mType = (InputType)mType;
 
             // index of input set
             if (XmlParser::hasAttribute(currentNode, "input_set")) {

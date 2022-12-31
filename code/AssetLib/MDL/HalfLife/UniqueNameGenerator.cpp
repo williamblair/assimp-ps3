@@ -44,6 +44,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "UniqueNameGenerator.h"
+#include "to_string.h"
 #include <algorithm>
 #include <list>
 #include <map>
@@ -88,7 +89,7 @@ void UniqueNameGenerator::make_unique(std::vector<std::string> &names) {
     const std::string template_name_with_separator(template_name_ + separator_);
 
     auto format_name = [&](const std::string &base_name, size_t id) -> std::string {
-        return base_name + separator_ + std::to_string(id);
+        return base_name + separator_ + to_string(id);
     };
 
     auto generate_unique_name = [&](const std::string &base_name) -> std::string {

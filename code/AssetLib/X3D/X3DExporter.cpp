@@ -7,6 +7,7 @@
 #ifndef ASSIMP_BUILD_NO_X3D_EXPORTER
 
 #include "X3DExporter.hpp"
+#include "to_string.h"
 
 // Header files, Assimp.
 #include <assimp/Exceptional.h>

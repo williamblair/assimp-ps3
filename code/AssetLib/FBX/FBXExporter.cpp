@@ -62,6 +62,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string>
 #include <sstream> // stringstream
 #include <ctime> // localtime, tm_*
+#include <cstdlib> // atoi
 #include <map>
 #include <set>
 #include <vector>
@@ -1571,7 +1572,7 @@ void FBXExporter::WriteObjects ()
             if (embedded_texture->mFilename.length > 0) {
                 newPath << embedded_texture->mFilename.C_Str();
             } else if (embedded_texture->achFormatHint[0]) {
-                int texture_index = std::stoi(path.substr(1, path.size() - 1));
+                int texture_index = atoi(path.substr(1, path.size() - 1).c_str());
                 newPath << texture_index << "." << embedded_texture->achFormatHint;
             }
             path = newPath.str();

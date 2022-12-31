@@ -52,6 +52,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #if !defined(ASSIMP_BUILD_NO_GLTF_IMPORTER) && !defined(ASSIMP_BUILD_NO_GLTF1_IMPORTER)
 
 #include "glTFCommon.h"
+#include "to_string.h"
 #include <assimp/Exceptional.h>
 #include <algorithm>
 #include <list>
@@ -194,7 +195,7 @@ inline unsigned int ComponentTypeSize(ComponentType t) {
         return 1;
     default:
         std::string err = "GLTF: Unsupported Component Type ";
-        err += std::to_string(t);
+        err += to_string(t);
         throw DeadlyImportError(err);
     }
 }

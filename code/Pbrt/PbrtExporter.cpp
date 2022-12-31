@@ -61,6 +61,7 @@ Other:
 #ifndef ASSIMP_BUILD_NO_PBRT_EXPORTER
 
 #include "PbrtExporter.h"
+#include "to_string.h"
 
 #include <assimp/version.h>
 #include <assimp/DefaultIOSystem.h>
@@ -819,7 +820,7 @@ void PbrtExporter::WriteMesh(aiMesh* mesh) {
     } else {
         float opacity = 1;
         if (material->Get(AI_MATKEY_OPACITY, opacity) == AI_SUCCESS && opacity < 1)
-            alpha = std::string("    \"float alpha\" [ ") + std::to_string(opacity) + " ]\n";
+            alpha = std::string("    \"float alpha\" [ ") + to_string(opacity) + " ]\n";
     }
 
     // Output the shape specification

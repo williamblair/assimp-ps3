@@ -1053,7 +1053,13 @@ T Accessor::Indexer::GetValue(int i) {
     const size_t sizeToCopy = std::min(elemSize, sizeof(T));
     T value = T();
     // Assume platform endianness matches GLTF binary data (which is little-endian).
-    memcpy(&value, data + i * stride, sizeToCopy);
+    // FALSE - bj changed
+    //memcpy(&value, data + i * stride, sizeToCopy);
+    uint8_t* outPtr = &((uint8_t*)&value)[sizeof(value)-1];
+    for (size_t j=0; j<sizeToCopy; ++j) {
+        *outPtr = *((data + i * stride) + j);
+        --outPtr;
+    }
     return value;
 }
 

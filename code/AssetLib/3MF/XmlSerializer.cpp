@@ -118,7 +118,7 @@ aiMatrix4x4 parseTransformMatrix(const std::string& matrixStr) {
     for (char c : matrixStr) {
         if (c == ' ') {
             if (!currentNumber.empty()) {
-                float f = std::stof(currentNumber);
+                float f = strtof(currentNumber.c_str(), NULL);
                 numbers.push_back(f);
                 currentNumber.clear();
             }
@@ -127,7 +127,7 @@ aiMatrix4x4 parseTransformMatrix(const std::string& matrixStr) {
         }
     }
     if (!currentNumber.empty()) {
-        const float f = std::stof(currentNumber);
+        const float f = strtof(currentNumber.c_str(), NULL);
         numbers.push_back(f);
     }
 

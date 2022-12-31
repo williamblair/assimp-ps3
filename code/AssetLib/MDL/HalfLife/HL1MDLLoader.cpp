@@ -1184,7 +1184,7 @@ void HL1MDLLoader::read_sequence_transitions() {
     uint8_t *ptransitions = ((uint8_t *)header_ + header_->transitionindex);
     aiMetadata *md = transition_graph_node->mMetaData = aiMetadata::Alloc(header_->numtransitions * header_->numtransitions);
     for (unsigned int i = 0; i < md->mNumProperties; ++i)
-        md->Set(i, std::to_string(i), static_cast<int>(ptransitions[i]));
+        md->Set(i, to_string(i), static_cast<int>(ptransitions[i]));
 }
 
 void HL1MDLLoader::read_attachments() {

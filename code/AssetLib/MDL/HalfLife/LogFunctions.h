@@ -44,7 +44,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef AI_MDL_HALFLIFE_LOGFUNCTIONS_INCLUDED
 #define AI_MDL_HALFLIFE_LOGFUNCTIONS_INCLUDED
 
+#include "to_string.h"
+
 #include <assimp/Logger.hpp>
+#include <sstream>
 #include <string>
 
 namespace Assimp {
@@ -74,10 +77,10 @@ static inline void log_warning_limit_exceeded(
     ASSIMP_LOG_WARN(MDL_HALFLIFE_LOG_HEADER
         + subject
         + " has "
-        + std::to_string(current_amount) + " "
+        + to_string(current_amount) + " "
         + direct_object
         + ", which exceeds the limit ("
-        + std::to_string(LIMIT)
+        + to_string(LIMIT)
         + ")");
 }
 

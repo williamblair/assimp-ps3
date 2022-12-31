@@ -25,6 +25,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <cassert>
 
+#include "to_string.h"
+
 BEGIN_ODDLPARSER_NS
 
 static Value::Iterator end(nullptr);
@@ -299,19 +301,19 @@ void Value::dump(IOStreamBase &stream) {
             stream.write("None\n");
             break;
         case ValueType::ddl_bool:
-            stream.write(std::to_string(getBool()) + "\n");
+            stream.write(to_string(getBool()) + "\n");
             break;
         case ValueType::ddl_int8:
-            stream.write(std::to_string(getInt8()) + "\n");
+            stream.write(to_string(getInt8()) + "\n");
             break;
         case ValueType::ddl_int16:
-            stream.write(std::to_string(getInt16()) + "\n");
+            stream.write(to_string(getInt16()) + "\n");
             break;
         case ValueType::ddl_int32:
-            stream.write(std::to_string(getInt32()) + "\n");
+            stream.write(to_string(getInt32()) + "\n");
             break;
         case ValueType::ddl_int64:
-            stream.write(std::to_string(getInt64()) + "\n");
+            stream.write(to_string(getInt64()) + "\n");
             break;
         case ValueType::ddl_unsigned_int8:
             stream.write("Not supported\n");
@@ -329,10 +331,10 @@ void Value::dump(IOStreamBase &stream) {
             stream.write("Not supported\n");
             break;
         case ValueType::ddl_float:
-            stream.write(std::to_string(getFloat()) + "\n");
+            stream.write(to_string(getFloat()) + "\n");
             break;
         case ValueType::ddl_double:
-            stream.write(std::to_string(getDouble()) + "\n");
+            stream.write(to_string(getDouble()) + "\n");
             break;
         case ValueType::ddl_string:
             stream.write(std::string(getString()) + "\n");

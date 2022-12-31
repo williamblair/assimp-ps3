@@ -1,6 +1,7 @@
 #include "X3DXmlHelper.h"
 #include "X3DImporter.hpp"
 
+#include <cstdlib>
 #include <assimp/ParsingUtils.h>
 
 namespace Assimp {
@@ -15,9 +16,9 @@ bool X3DXmlHelper::getColor3DAttribute(XmlNode &node, const char *attributeName,
             return false;
         }
         auto it = values.begin();
-        color.r = stof(*it++);
-        color.g = stof(*it++);
-        color.b = stof(*it);
+        color.r = strtof((*it++).c_str(), NULL);
+        color.g = strtof((*it++).c_str(), NULL);
+        color.b = strtof((*it).c_str(), NULL);
         return true;
     }
     return false;
@@ -33,8 +34,8 @@ bool X3DXmlHelper::getVector2DAttribute(XmlNode &node, const char *attributeName
             return false;
         }
         auto it = values.begin();
-        color.x = stof(*it++);
-        color.y = stof(*it);
+        color.x = strtof((*it++).c_str(), NULL);
+        color.y = strtof((*it).c_str(), NULL);
         return true;
     }
     return false;
@@ -50,9 +51,9 @@ bool X3DXmlHelper::getVector3DAttribute(XmlNode &node, const char *attributeName
             return false;
         }
         auto it = values.begin();
-        color.x = stof(*it++);
-        color.y = stof(*it++);
-        color.z = stof(*it);
+        color.x = strtof((*it++).c_str(), NULL);
+        color.y = strtof((*it++).c_str(), NULL);
+        color.z = strtof((*it).c_str(), NULL);
         return true;
     }
     return false;
