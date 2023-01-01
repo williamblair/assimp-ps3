@@ -1052,14 +1052,15 @@ T Accessor::Indexer::GetValue(int i) {
     // Ensure that the memcpy doesn't overwrite the local.
     const size_t sizeToCopy = std::min(elemSize, sizeof(T));
     T value = T();
-    // Assume platform endianness matches GLTF binary data (which is little-endian).
-    // FALSE - bj changed
-    //memcpy(&value, data + i * stride, sizeToCopy);
+#ifndef AI_BUILD_BIG_ENDIAN
+    memcpy(&value, data + i * stride, sizeToCopy);
+#else
     uint8_t* outPtr = &((uint8_t*)&value)[sizeof(value)-1];
     for (size_t j=0; j<sizeToCopy; ++j) {
         *outPtr = *((data + i * stride) + j);
         --outPtr;
     }
+#endif
     return value;
 }
 

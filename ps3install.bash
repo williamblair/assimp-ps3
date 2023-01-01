@@ -14,15 +14,19 @@ CC=ppu-gcc \
 CXX=ppu-g++ \
 cmake .. \
 -DCMAKE_INSTALL_PREFIX=/usr/local/ps3dev/portlibs/ppu \
--DCMAKE_CXX_FLAGS="-I$PSL1GHT/ppu/include -I$PSL1GHT/ppu/include/simdmath \
+-DCMAKE_CXX_FLAGS="-DAI_BUILD_BIG_ENDIAN \
+-I$PSL1GHT/ppu/include -I$PSL1GHT/ppu/include/simdmath \
 -I$PS3DEV/portlibs/ppu/include -I$PS3DEV/ppu/powerpc64-ps3-elf/include \
 -I$PS3DEV/ppu/powerpc64-ps3-elf/include/c++/7.2.0 \
 -L$PSL1GHT/ppu/lib -L$PSL1GHT/portlibs/ppu/lib \
 -D_XOPEN_SOURCE=500" \
--DCMAKE_C_FLAGS="-I$PSL1GHT/ppu/include -I$PSL1GHT/ppu/include/simdmath \
+-DCMAKE_C_FLAGS="-DAI_BUILD_BIG_ENDIAN \
+-I$PSL1GHT/ppu/include -I$PSL1GHT/ppu/include/simdmath \
 -I$PS3DEV/portlibs/ppu/include  -I$PS3DEV/ppu/powerpc64-ps3-elf/include \
 -L$PSL1GHT/ppu/lib -L$PSL1GHT/portlibs/ppu/lib \
 -D_XOPEN_SOURCE" \
+-DASSIMP_BUILD_MINIZIP=1 \
+-DASSIMP_BUILD_ZLIB=1 \
 -DBUILD_SHARED_LIBS=0 \
 -DASSIMP_BUILD_TESTS=0
 
