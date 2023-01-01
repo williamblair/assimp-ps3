@@ -20,6 +20,20 @@ A library to import and export various 3d-model-formats including scene-post-pro
 APIs are provided for C and C++. There are various bindings to other languages (C#, Java, Python, Delphi, D). Assimp also runs on Android and iOS.
 Additionally, assimp features various __mesh post processing tools__: normals and tangent space generation, triangulation, vertex cache locality optimization, removal of degenerate primitives and duplicate vertices, sorting by primitive type, merging of redundant materials and many more.
 
+### PS3/PSL1GHT Port ###
+Currently a work in progress; The following formats seem to be working so far:
+
+* glTF2
+* IQM
+
+To build/install, you'll need ![ps3dev/psl1ght](https://github.com/ps3dev), as well as cmake. Tested on Ubuntu 22.04.1 LTS.
+
+```bash
+bash ps3install.bash
+```
+
+Assumes you have write permissions to `$PS3DEV`/`$PSL1GHT` (/usr/local/ps3dev), and that the ps3dev gcc version is 7.2.0.
+
 ### Latest Doc's ###
 Please check the latest documents at [Asset-Importer-Lib-Doc](https://assimp-docs.readthedocs.io/en/latest/). 
 
